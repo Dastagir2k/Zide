@@ -1,0 +1,156 @@
+// Filename: App.js
+
+import { useState } from 'react';
+import './App.css';
+import Editor from "@monaco-editor/react";
+import Navbar from "./Navbar.jsx"
+import Axios from 'axios';
+import spinner from './spinner.svg';
+
+function App() {
+    
+    // State variable to set users source code
+    const [userCode, setUserCode] = useState(``);
+
+    // State variable to set editors default language
+    const [userLang, setUserLang] = useState("python");
+
+    // State variable to set editors default theme
+    const [userTheme, setUserTheme] = useState("vs-dark");
+
+    // State variable to set editors default font size
+    const [fontSize, setFontSize] = useState(20);
+
+    // State variable to set users input
+    const [userInput, setUserInput] = useState("");
+
+    // State variable to set users output
+    const [userOutput, setUserOutput] = useState("");
+
+    // Loading state variable to show spinner
+    // while fetching data
+    const [loading, setLoading] = useState(false);
+
+    const options = {
+        fontSize: fontSize
+    }
+
+    function handleEditorWillMount(monaco) {
+        monaco.languages.registerCompletionItemProvider('python', {
+            provideCompletionItems: () => {
+                const suggestions = [
+                    {
+                        label: 'print',
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        insertText: 'print(${1})',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        documentation: 'Outputs a message to the console.',
+                    },
+                    {
+                        label: 'input',
+                        kind: monaco.languages.CompletionItemKind.Function,
+                        insertText: 'input(${1})',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        documentation: 'Gets user input.',
+                    },
+                    {
+                        label: 'for loop',
+                        kind: monaco.languages.CompletionItemKind.Snippet,
+                        insertText: 'for i in range(${1}):\n\t${2}',
+                        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                        documentation: 'Python for loop.',
+                    },
+                    // Add more custom suggestions here
+                ];
+                return { suggestions: suggestions };
+            }
+        });
+    }
+
+    // Function to call the compile endpoint
+    // Function to call the compile endpoint
+async function compile() {
+    setLoading(true);
+    if (userCode === ``) {
+        setLoading(false); // Ensure loading is turned off if there's no code
+        return;
+    }
+
+    try {
+        // Await the Axios request
+        const res = await Axios.post(`http://localhost:8000/compile`, {
+            code: userCode,
+            language: userLang,
+            input: userInput
+        });
+
+        console.log("Output--", res.data);
+        console.log("User input:", userInput);
+
+        setUserOutput(res.data);
+    } catch (err) {
+        setUserOutput("Error: " + (err.response ? err.response.data.error : err.message));
+    } finally {
+        setLoading(false); // Ensure loading is turned off after the request finishes
+    }
+}
+
+
+    // Function to clear the output screen
+    function clearOutput() {
+        setUserOutput("");
+    }
+
+    return (
+        <div className="App">
+            <Navbar
+                userLang={userLang} setUserLang={setUserLang}
+                userTheme={userTheme} setUserTheme={setUserTheme}
+                fontSize={fontSize} setFontSize={setFontSize}
+            />
+            <div className="main">
+                <div className="left-container">
+                    <Editor 
+                        options={options}
+                        height="calc(100vh - 50px)"
+                        width="100%"
+                        theme={userTheme}
+                        language={userLang}
+                        defaultLanguage="python"
+                        defaultValue="# Enter your code here"
+                        onChange={(value) => { setUserCode(value) }}
+                        beforeMount={handleEditorWillMount}
+                    
+                    />
+                    <button className="run-btn" onClick={() => compile()}>
+                        Run
+                    </button>
+                </div>
+                <div className="right-container">
+                    <h4>Input:</h4>
+                    <div className="input-box">
+                        <textarea id="code-inp" onChange=
+                            {(e) => setUserInput(e.target.value)}>
+                        </textarea>
+                    </div>
+                    <h4>Output:</h4>
+                    {loading ? (
+                        <div className="spinner-box">
+                            <img src={spinner} alt="Loading..." />
+                        </div>
+                    ) : (
+                        <div className="output-box">
+                            <pre>{userOutput}</pre>
+                            <button onClick={() => { clearOutput() }}
+                                className="clear-btn">
+                                Clear
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default App;
