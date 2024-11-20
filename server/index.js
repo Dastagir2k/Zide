@@ -5,9 +5,20 @@ const cors = require("cors");
 const Axios = require("axios");
 const app = express();
 const PORT = 8000;
+// const Cliq = require("zcatalyst-integ-cliq");
+
+// Assuming you've set up authentication within Catalyst, get the auth instance
+// const cliq = Cliq.initialize(CatalystAppInstance);
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/",(req,res)=>{
+    res.status(200).send("HIIIII");
+    console.log("Hii");
+    
+})
+
 
 app.post("/compile", (req, res) => {
     // getting the required data from the request
@@ -49,16 +60,53 @@ app.post("/compile", (req, res) => {
 
     // calling the code compilation API
     Axios(config)
-        .then((response) => {
-            res.json(response.data?.run.stdout|| { error: "Unexpected response format" });
-  // Send the run object directly
-            console.log("working",response.data.run.stdout);
-        }).catch((error) => {
-            console.log(error);
-            res.status(500).send({ error: "Something went wrong" });
-        });
+    .then((response) => {
+        // Check if stdout exists, if not check stderr for error message
+        if (response.data.run.stdout) {
+            res.json( response.data.run.stdout );
+            console.log("Code executed successfully, output:", response.data.run.stdout);
+        } else if (response.data.run.stderr) {
+            const errorMessage = extractError(response.data.run.stderr);
+
+            // Log the extracted error message
+            console.error("Error during code execution:", errorMessage);
+            res.json({ error: response.data.run.stderr });
+            console.error("Error during code execution:", response.data.run.output);
+        } else {
+            // If both stdout and stderr are empty or missing, send unexpected response format
+            res.status(500).json({ error: "Unexpected response format" });
+            console.error("Unexpected response format:", response.data);
+        }
+    })
+    .catch((error) => {
+        // Log the error from Axios
+        console.error("Error during code execution:", error.message);
+        
+        // If the error is from the API response, log and send the specific error
+        if (error.response) {
+            console.error("API response error details:", error.response.data);
+            res.status(500).json({ error: error.response.data || "Something went wrong with the API" });
+        } else {
+            // Log any other errors (e.g., network issues)
+            console.error("General error:", error);
+            res.status(500).json({ error: "Internal server error or connection issue" });
+        }
+    });
+
+    function extractError(stderr) {
+        // Regex to extract the error message, such as NameError, TypeError, etc.
+        const regex = /(?:Traceback.*?)(?:\n\s+)([^\n]+)/;
+        const match = stderr.match(regex);
+    
+        if (match) {
+            return match; // Return the first matched line, which will be the error message (e.g., "NameError: name 'l' is not defined")
+        } else {
+            return "Unknown error occurred";
+        }
+    }
+
 });
 
-app.listen(process.env.PORT || PORT, () => {
+app.listen(process.env.X_ZOHO_CATALYST_LISTEN_PORT || PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

@@ -1,0 +1,9 @@
+{
+	"name": "z_ide_function",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "dastagir2k@gmail.com",
+	"dependencies": {
+		"zcatalyst-integ-cliq": "latest"
+	}
+}

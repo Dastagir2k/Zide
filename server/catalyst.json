@@ -1,0 +1,15 @@
+{
+  "appsail": [
+    {
+      "source": "D:\\Online-Compiler\\server",
+      "name": "AppSail"
+    }
+  ],
+  "functions": {
+    "targets": [
+      "z_ide_function"
+    ],
+    "ignore": [],
+    "source": "functions"
+  }
+}
