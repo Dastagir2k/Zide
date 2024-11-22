@@ -62,7 +62,7 @@ function App() {
         }
 
         try {
-            const res = await Axios.post('http://localhost:3001/compile', {
+            const res = await Axios.post('https://zide-server.onrender.com/compile', {
                 code: userCode,
                 language: userLang,
                 input: userInput,
@@ -98,7 +98,7 @@ function App() {
                             onChange={(e) => setUserLang(e.target.value)}
                         >
                             <option value="python">Python</option>
-                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
                             <option value="cpp">C++</option>
                         </select>
                         <button
