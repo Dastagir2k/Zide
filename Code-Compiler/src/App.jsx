@@ -90,7 +90,7 @@ function App() {
             {/* Navbar */}
             <nav className="bg-gradient-to-r from-teal-500 to-blue-500 text-white p-4">
                 <div className="flex items-center justify-between">
-                    <span className="font-bold text-xl">Online Compiler</span>
+                    <span className="font-bold text-xl">zIDE Compiler</span>
                     <div className="flex items-center space-x-4">
                         <select
                             className="p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded-md"
