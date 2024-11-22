@@ -100,6 +100,7 @@ function App() {
                             <option value="python">Python</option>
                             <option value="java">Java</option>
                             <option value="cpp">C++</option>
+                            <option value="javascript">Javascript</option>
                         </select>
                         <button
                             onClick={() =>

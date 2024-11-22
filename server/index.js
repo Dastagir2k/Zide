@@ -25,7 +25,8 @@ app.post("/compile", (req, res) => {
         "c": { language: "c", version: "10.2.0" },
         "cpp": { language: "c++", version: "10.2.0" },
         "python": { language: "python", version: "3.10.0" },
-        "java": { language: "java", version: "15.0.2" }
+        "java": { language: "java", version: "15.0.2" },
+        "javascript": { language: "javascript", version: "16.3.0" }
     };
 
     if (!languageMap[language]) {
