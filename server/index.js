@@ -1,14 +1,9 @@
-//index.js
 
 const express = require("express");
 const cors = require("cors");
 const Axios = require("axios");
 const app = express();
 const PORT = 8000;
-// const Cliq = require("zcatalyst-integ-cliq");
-
-// Assuming you've set up authentication within Catalyst, get the auth instance
-// const cliq = Cliq.initialize(CatalystAppInstance);
 
 app.use(cors());
 app.use(express.json());
