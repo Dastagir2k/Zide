@@ -5,7 +5,13 @@ const Axios = require("axios");
 const app = express();
 const PORT = 8000;
 
-app.use(cors());
+const corsOptions = {
+    origin: ["http://localhost:5173", "https://zide.vercel.app/"], // Add allowed origins
+    methods: ["GET", "POST"], // Allow only necessary methods
+    allowedHeaders: ["Content-Type"], // Allow only necessary headers
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/",(req,res)=>{
