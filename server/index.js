@@ -102,6 +102,6 @@ app.post("/compile", (req, res) => {
 
 });
 
-app.listen(process.env.X_ZOHO_CATALYST_LISTEN_PORT || PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
