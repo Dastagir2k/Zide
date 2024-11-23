@@ -5,13 +5,12 @@ const Axios = require("axios");
 const app = express();
 const PORT = 8000;
 
-const corsOptions = {
-    origin: ["http://localhost:5173", "https://zide.vercel.app/"], // Add allowed origins
-    methods: ["GET", "POST"], // Allow only necessary methods
-    allowedHeaders: ["Content-Type"], // Allow only necessary headers
-};
 
-app.use(cors(corsOptions));
+
+app.use(cors({
+    origin: 'https://zide.vercel.app'
+  }));
+
 app.use(express.json());
 
 app.get("/",(req,res)=>{
@@ -31,8 +30,7 @@ app.post("/compile", (req, res) => {
         "c": { language: "c", version: "10.2.0" },
         "cpp": { language: "c++", version: "10.2.0" },
         "python": { language: "python", version: "3.10.0" },
-        "java": { language: "java", version: "15.0.2" },
-        "javascript": { language: "javascript", version: "16.3.0" }
+        "java": { language: "java", version: "15.0.2" } 
     };
 
     if (!languageMap[language]) {
