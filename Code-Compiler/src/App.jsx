@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
 function App() {
   const [searchParams] = useSearchParams(); 
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
    
@@ -106,7 +106,7 @@ console.log("welcome user : ", userId);
             {/* Navbar */}
             <nav className="bg-gradient-to-r from-teal-500 to-blue-500 text-white p-4">
                 <div className="flex items-center justify-between">
-                    <span className="font-bold text-xl">zIDE Compiler</span>
+                    <span className="font-bold text-xl">zIDE Compiler {userId ? `${userId}` : ""}</span>
                     <div className="flex items-center space-x-4">
                         <select
                             className="p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded-md"
