@@ -3,9 +3,11 @@ import { useState } from 'react';
 import Editor from '@monaco-editor/react';
 import Axios from 'axios';
 import spinner from './spinner.svg';
+import { useParams } from 'react-router-dom';
 
 function App() {
-    console.log("ide is working");
+    const { id } = useParams(); // Extract `userid` from the URL
+    console.log("welcome user : ", id );
     
     // State variables
     const [userCode, setUserCode] = useState(''); // User code
@@ -73,6 +75,7 @@ function App() {
             } else {
                 setUserOutput(res.data); // If there's output, display it
             }
+            alert("save")
         } catch (err) {
             setUserOutput('Error: ' + (err.response ? err.response.data.error : err.message));
         } finally {
@@ -87,6 +90,7 @@ function App() {
 
     return (
         <div className="App bg-white dark:bg-gray-900 text-black dark:text-white">
+            
             {/* Navbar */}
             <nav className="bg-gradient-to-r from-teal-500 to-blue-500 text-white p-4">
                 <div className="flex items-center justify-between">
