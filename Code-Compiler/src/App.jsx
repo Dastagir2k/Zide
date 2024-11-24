@@ -12,11 +12,13 @@ function App() {
   useEffect(() => {
    
     const userid = searchParams.get('userid');
-    if (userid) {
+    if (userid!=null) {
       setUserId(userid); // Store the user ID
-      console.log("welcome user : ", userId);
+console.log("welcome user not null: ", userId);
+
     }
-  }, [searchParams]);
+}, [searchParams]);
+console.log("welcome user lateeeee : ", userId);
     
     
     // State variables
