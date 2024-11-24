@@ -1,13 +1,23 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import Axios from 'axios';
 import spinner from './spinner.svg';
 import { useParams } from 'react-router-dom';
-
+import { useSearchParams } from 'react-router-dom';
 function App() {
-    const { id } = useParams(); // Extract `userid` from the URL
-    console.log("welcome user : ", id );
+  const [searchParams] = useSearchParams(); 
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+   
+    const userid = searchParams.get('userid');
+    if (userid) {
+      setUserId(userid); // Store the user ID
+      console.log("welcome user : ", userId);
+    }
+  }, [searchParams]);
+    
     
     // State variables
     const [userCode, setUserCode] = useState(''); // User code

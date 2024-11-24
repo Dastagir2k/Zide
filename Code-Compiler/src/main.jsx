@@ -9,7 +9,8 @@ createRoot(document.getElementById('root')).render(
     <Router>
       <Routes>
         {/* Pass `userid` as a route parameter */}
-        <Route path="/zuid/:id" element={<App />} />
+        
+        <Route path="/" element={<App />} />
       </Routes>
     </Router>
   </StrictMode>
