@@ -9,7 +9,7 @@ function App() {
   const [searchParams] = useSearchParams(); 
   const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
+ 
    
     const userid = searchParams.get('userid');
     if (userid!=null) {
@@ -17,7 +17,7 @@ function App() {
 console.log("welcome user not null: ", userId);
 
     }
-}, [searchParams]);
+
 console.log("welcome user lateeeee : ", userId);
     
     
