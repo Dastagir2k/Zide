@@ -1,30 +1,41 @@
-
 const express = require("express");
 const cors = require("cors");
 const Axios = require("axios");
+const mongoose = require("mongoose");
+const Code = require("./models/CodeSchema.model.js");
+require("dotenv").config();
+
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
-
-
-app.use(cors({
-    origin: 'https://zide.vercel.app'
-  }));
+app.use(cors());
 
 app.use(express.json());
 
-app.get("/",(req,res)=>{
-    res.status(200).send("HIIIII");
-    console.log("Hii");
-    
+// MongoDB Connection
+mongoose.connect("mongodb+srv://dastagir2k:lZEoPgrZohdKeaG8@cluster0.pb6ng.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
+    .then(() => console.log("Connected to MongoDB"))
+    .catch((err) => console.error("MongoDB connection error:", err.message));
 
+// Health Check Endpoint
+app.get("/", (req, res) => {
+    res.status(200).send("Server is running!");
+});
 
-app.post("/compile", (req, res) => {
+// Compile Code Endpoint
+app.post("/compile", async (req, res) => {
     // getting the required data from the request
     let code = req.body.code;
     let language = req.body.language;
     let input = req.body.input;
+    let userId = req.body.userId; // Ensure userId is sent in the request body
+
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
 
     let languageMap = {
         "c": { language: "c", version: "10.2.0" },
@@ -60,53 +71,40 @@ app.post("/compile", (req, res) => {
 
     // calling the code compilation API
     Axios(config)
-    .then((response) => {
-        // Check if stdout exists, if not check stderr for error message
+    .then(async (response) => {
         if (response.data.run.stdout) {
-            res.json( response.data.run.stdout );
-            console.log("Code executed successfully, output:", response.data.run.stdout);
-        } else if (response.data.run.stderr) {
-            const errorMessage = extractError(response.data.run.stderr);
+            // Save the successfully compiled code to the database
+            const savedCode = new Code({
+                userId: userId,
+                code: code,
+                language: language
+            });
 
-            // Log the extracted error message
-            console.error("Error during code execution:", errorMessage);
+            try {
+                await savedCode.save();
+                console.log("Code saved successfully:", savedCode);
+                console.log("output code",response.data.run.stdout);
+                
+            } catch (error) {
+                console.error("Error saving code to database:", error.message);
+                return res.status(500).json({ error: "Error saving code to database" });
+            }
+
+            res.json({ output: response.data.run.stdout });
+        } else if (response.data.run.stderr) {
             res.json({ error: response.data.run.stderr });
-            console.error("Error during code execution:", response.data.run.output);
         } else {
-            // If both stdout and stderr are empty or missing, send unexpected response format
             res.status(500).json({ error: "Unexpected response format" });
-            console.error("Unexpected response format:", response.data);
         }
     })
     .catch((error) => {
-        // Log the error from Axios
         console.error("Error during code execution:", error.message);
-        
-        // If the error is from the API response, log and send the specific error
-        if (error.response) {
-            console.error("API response error details:", error.response.data);
-            res.status(500).json({ error: error.response.data || "Something went wrong with the API" });
-        } else {
-            // Log any other errors (e.g., network issues)
-            console.error("General error:", error);
-            res.status(500).json({ error: "Internal server error or connection issue" });
-        }
+        res.status(500).json({ error: "Internal server error or connection issue" });
     });
-
-    function extractError(stderr) {
-        // Regex to extract the error message, such as NameError, TypeError, etc.
-        const regex = /(?:Traceback.*?)(?:\n\s+)([^\n]+)/;
-        const match = stderr.match(regex);
-    
-        if (match) {
-            return match; // Return the first matched line, which will be the error message (e.g., "NameError: name 'l' is not defined")
-        } else {
-            return "Unknown error occurred";
-        }
-    }
-
 });
 
+
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
