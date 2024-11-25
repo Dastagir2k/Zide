@@ -82,6 +82,8 @@ function App() {
       });
 
       if (res.data.error) {
+        console.log("error from client");
+        
         setUserOutput('Error: ' + res.data.error);
       } else {
         console.log(res.data.output);
