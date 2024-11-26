@@ -77,21 +77,9 @@ app.post("/compile", async (req, res) => {
             res.json({ output: response.data.run.stdout });
             
             // Save the successfully compiled code to the database
-            const savedCode = new Code({
-                userId: userId,
-                code: code,
-                language: language
-            });
-
-            try {
-                await savedCode.save();
-                console.log("Code saved successfully:", savedCode);
-                console.log("output code",response.data.run.stdout);
-                
-            } catch (error) {
-                console.error("Error saving code to database:", error.message);
-                return res.status(500).json({ error: "Error saving code to database" });
-            }
+            Code.create({ userId, code, language }).catch(console.error);
+            console.log("data saved in db ");
+            
 
            
         } else if (response.data.run.stderr) {

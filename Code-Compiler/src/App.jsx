@@ -76,7 +76,7 @@ function App() {
     }
 
     try {
-      const res = await axiosInstance.post('https://zide-server.onrender.com/compile', {
+      const res = await Axios.post('https://zide-server.onrender.com/compile', {
         code: userCode,
         language: userLang,
         input: userInput,
