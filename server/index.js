@@ -16,6 +16,7 @@ app.use(express.json());
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    maxPoolSize: 10,
 })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err.message));
@@ -73,6 +74,8 @@ app.post("/compile", async (req, res) => {
     Axios(config)
     .then(async (response) => {
         if (response.data.run.stdout) {
+            res.json({ output: response.data.run.stdout });
+            
             // Save the successfully compiled code to the database
             const savedCode = new Code({
                 userId: userId,
@@ -90,7 +93,7 @@ app.post("/compile", async (req, res) => {
                 return res.status(500).json({ error: "Error saving code to database" });
             }
 
-            res.json({ output: response.data.run.stdout });
+           
         } else if (response.data.run.stderr) {
             res.json({ error: response.data.run.stderr });
         } else {
@@ -102,6 +105,14 @@ app.post("/compile", async (req, res) => {
         res.status(500).json({ error: "Internal server error or connection issue" });
     });
 });
+
+
+// get the code using user'id
+app.get("/getcode",async(req,res)=>{
+    const userId=req.body.userId;
+    const response=await Code.find({userId:userId})
+    res.status(200).send(response)
+})
 
 
 // Start the server

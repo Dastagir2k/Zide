@@ -8,7 +8,9 @@ import { useSearchParams } from 'react-router-dom';
 function App() {
   const [searchParams] = useSearchParams();
   const [userId, setUserId] = useState("");
-
+  const axiosInstance = Axios.create({
+    timeout: 10000, // Set timeout to 10 seconds (10000ms)
+  });
   useEffect(() => {
     const userid = searchParams.get('userid');
     if (userid != null) {
@@ -74,7 +76,7 @@ function App() {
     }
 
     try {
-      const res = await Axios.post('https://zide-server.onrender.com/compile', {
+      const res = await axiosInstance.post('https://zide-server.onrender.com/compile', {
         code: userCode,
         language: userLang,
         input: userInput,
@@ -170,7 +172,7 @@ function App() {
           <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300">
             {loading ? (
               <div className="flex justify-center items-center">
-                <img src={spinner} alt="Loading..." className="h-12 w-12" />
+                <img src={spinner} alt="Loading..." className="h-12 w-12 text-white" />
               </div>
             ) : (
               <pre>{userOutput}</pre>
