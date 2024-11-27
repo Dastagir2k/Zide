@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 
 app.use(express.json());
-const genAI = new GoogleGenerativeAI("AIzaSyCBSCM7lW2ku5Jd3iZtG3Wu_ezd3Ko0BCE");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_URL);
 
 
 
