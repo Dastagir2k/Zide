@@ -97,7 +97,7 @@ app.post("/compile", async (req, res) => {
 
 // get the code using user'id
 app.get("/getcode",async(req,res)=>{
-    const userId=req.body.userId;
+    const userId = req.query.userId;
     const response=await Code.findOne({userId:userId})
     res.status(200).send(response)
 })
