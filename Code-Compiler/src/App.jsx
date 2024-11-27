@@ -4,6 +4,7 @@ import Axios from 'axios';
 import spinner from './spinner.svg';
 import { useParams } from 'react-router-dom';
 import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -29,6 +30,7 @@ function App() {
   const [userInput, setUserInput] = useState(''); // User input for the code
   const [userOutput, setUserOutput] = useState(''); // Output from the code
   const [loading, setLoading] = useState(false); // Loading state for the API call
+  const [aicode,setAiCode]=useState(""); // analyse the code using gemini ai
 
   // Monaco Editor options
   const options = {
@@ -99,6 +101,15 @@ function App() {
     }
   }
 
+  const handleOptimizeCode= async()=>{
+    const responseCode=await axios.post("http://localhost:8000/optimize",{
+      code:userCode
+    })
+    setAiCode(responseCode.data.code)
+    console.log(aicode);
+    
+  }
+
 
 
   // Function to clear the output screen
@@ -149,12 +160,20 @@ function App() {
             onChange={(value) => setUserCode(value)}
             beforeMount={handleEditorWillMount}
           />
+          <div className='flex flex-row  justify-between'>
           <button
             className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
             onClick={compile}
           >
             Run
           </button>
+          <button
+            className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
+            onClick={handleOptimizeCode}
+          >
+            Optimie
+          </button>
+          </div>
         </div>
 
         {/* Right Container - Input & Output */}
@@ -168,22 +187,34 @@ function App() {
             onChange={(e) => setUserInput(e.target.value)}
           ></textarea>
 
-          <h4 className="mt-4 text-xl font-semibold">Output:</h4>
-          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300">
-            {loading ? (
-              <div className="flex justify-center items-center">
-                <img src={spinner} alt="Loading..." className="h-12 w-12 text-white" />
-              </div>
-            ) : (
-              <pre>{userOutput}</pre>
-            )}
-            <button
-              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              onClick={clearOutput}
-            >
-              Clear
-            </button>
-          </div>
+<h4 className="mt-4 text-xl font-semibold">Output:</h4>
+<div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
+  {loading ? (
+    <div className="flex justify-center items-center">
+      <img src={spinner} alt="Loading..." className="h-12 w-12 text-white" />
+    </div>
+  ) : (
+    <pre className="whitespace-pre-wrap break-words">{userOutput}</pre>
+  )}
+  <button
+    className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+    onClick={clearOutput}
+  >
+    Clear
+  </button>
+</div>
+
+<h4 className="mt-4 text-xl font-semibold">AI:</h4>
+<div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
+  <pre className="whitespace-pre-wrap break-words">{aicode}</pre>
+  <button
+    className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+    onClick={clearOutput}
+  >
+    Copy
+  </button>
+</div>
+
         </div>
       </div>
     </div>

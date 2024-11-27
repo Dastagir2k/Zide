@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const Axios = require("axios");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const mongoose = require("mongoose");
 const Code = require("./models/CodeSchema.model.js");
 require("dotenv").config();
@@ -11,6 +13,11 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 
 app.use(express.json());
+const genAI = new GoogleGenerativeAI("AIzaSyCBSCM7lW2ku5Jd3iZtG3Wu_ezd3Ko0BCE");
+
+
+
+
 
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE_URL, {
@@ -20,6 +27,24 @@ mongoose.connect(process.env.DATABASE_URL, {
 })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err.message));
+
+
+
+    app.post("/optimize",async(req,res)=>{
+        const userCode=req.body.code;
+        try {
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+            const prompt= `Optimize the following code and include comments for readablity :\n\n${userCode}\n\nProvide the improved code  only.`;
+            const result = await model.generateContent(prompt);
+            console.log(result.response.text());
+            res.json({code:result.response.text()})
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Error optimizing code");
+        }
+    })
+
 
 // Health Check Endpoint
 app.get("/", (req, res) => {
@@ -107,6 +132,7 @@ app.get("/getcode",async(req,res)=>{
     
     res.status(200).send(response[lastElement])
 })
+
 
 
 // Start the server
