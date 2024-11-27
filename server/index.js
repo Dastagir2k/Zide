@@ -16,7 +16,7 @@ app.use(express.json());
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    maxPoolSize: 10,
+    maxPoolSize: 50,
 })
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err.message));
@@ -98,7 +98,7 @@ app.post("/compile", async (req, res) => {
 // get the code using user'id
 app.get("/getcode",async(req,res)=>{
     const userId=req.body.userId;
-    const response=await Code.find({userId:userId})
+    const response=await Code.findOne({userId:userId})
     res.status(200).send(response)
 })
 
