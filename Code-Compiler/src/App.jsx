@@ -102,7 +102,7 @@ function App() {
   }
 
   const handleOptimizeCode= async()=>{
-    const responseCode=await axios.post("http://localhost:8000/optimize",{
+    const responseCode=await axios.post("https://zide-server.onrender.com/optimize",{
       code:userCode
     })
     setAiCode(responseCode.data.code)
