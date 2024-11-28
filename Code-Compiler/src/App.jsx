@@ -79,7 +79,7 @@ function App() {
     }
 
     try {
-      const res = await Axios.post('https://zide-server.onrender.com//compile', {
+      const res = await Axios.post('https://zide-server.onrender.com/compile', {
         code: userCode,
         language: userLang,
         input: userInput,
@@ -103,7 +103,7 @@ function App() {
   }
 
   const handleOptimizeCode= async()=>{
-    const responseCode=await axios.post("https://zide-server.onrender.com//optimize",{
+    const responseCode=await axios.post("https://zide-server.onrender.com/optimize",{
       code:userCode
     })
     setAiCode(responseCode.data.code)
