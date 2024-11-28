@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import Editor from '@monaco-editor/react';
-import Axios from 'axios';
-import spinner from './spinner.svg';
-import { useParams } from 'react-router-dom';
-import { useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import Editor from "@monaco-editor/react";
+import Axios from "axios";
+import spinner from "./spinner.svg";
+import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 function App() {
   const [searchParams] = useSearchParams();
@@ -13,7 +13,7 @@ function App() {
     timeout: 10000, // Set timeout to 10 seconds (10000ms)
   });
   useEffect(() => {
-    const userid = searchParams.get('userid');
+    const userid = searchParams.get("userid");
     if (userid != null) {
       setUserId(userid); // Store the user ID
       console.log("welcome user not null: ", userId);
@@ -23,15 +23,16 @@ function App() {
   console.log("welcome user : ", userId);
 
   // State variables
-  const [userCode, setUserCode] = useState(''); // User code
-  const [userLang, setUserLang] = useState('python'); // Language selected
-  const [userTheme, setUserTheme] = useState('vs-dark'); // Theme selected
+  const [userCode, setUserCode] = useState(""); // User code
+  const [userLang, setUserLang] = useState("python"); // Language selected
+  const [userTheme, setUserTheme] = useState("vs-dark"); // Theme selected
   const [fontSize, setFontSize] = useState(20); // Font size for the editor
-  const [userInput, setUserInput] = useState(''); // User input for the code
-  const [userOutput, setUserOutput] = useState(''); // Output from the code
+  const [userInput, setUserInput] = useState(""); // User input for the code
+  const [userOutput, setUserOutput] = useState(""); // Output from the code
   const [loading, setLoading] = useState(false); // Loading state for the API call
-  const [aicode,setAiCode]=useState(""); // analyse the code using gemini ai
-  const [copied,setCopied]=useState(false);
+  const [aiLoading, setaiLoading] = useState(false); // laading state for the ai code
+  const [aicode, setAiCode] = useState(""); // analyse the code using gemini ai
+  const [copied, setCopied] = useState(false);
 
   // Monaco Editor options
   const options = {
@@ -40,29 +41,32 @@ function App() {
 
   // Monaco editor will mount
   function handleEditorWillMount(monaco) {
-    monaco.languages.registerCompletionItemProvider('python', {
+    monaco.languages.registerCompletionItemProvider("python", {
       provideCompletionItems: () => {
         const suggestions = [
           {
-            label: 'print',
+            label: "print",
             kind: monaco.languages.CompletionItemKind.Function,
-            insertText: 'print(${1})',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Outputs a message to the console.',
+            insertText: "print(${1})",
+            insertTextRules:
+              monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: "Outputs a message to the console.",
           },
           {
-            label: 'input',
+            label: "input",
             kind: monaco.languages.CompletionItemKind.Function,
-            insertText: 'input(${1})',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Gets user input.',
+            insertText: "input(${1})",
+            insertTextRules:
+              monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: "Gets user input.",
           },
           {
-            label: 'for loop',
+            label: "for loop",
             kind: monaco.languages.CompletionItemKind.Snippet,
-            insertText: 'for i in range(${1}):\n\t${2}',
-            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-            documentation: 'Python for loop.',
+            insertText: "for i in range(${1}):\n\t${2}",
+            insertTextRules:
+              monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            documentation: "Python for loop.",
           },
         ];
         return { suggestions: suggestions };
@@ -73,67 +77,90 @@ function App() {
   // Function to call the compile endpoint
   async function compile() {
     setLoading(true);
-    if (userCode === '') {
+    if (userCode === "") {
       setLoading(false); // Ensure loading is turned off if there's no code
       return;
     }
 
     try {
-      const res = await Axios.post('https://zide-server.onrender.com/compile', {
+      const res = await Axios.post("https://zide-server.onrender.com/compile", {
         code: userCode,
         language: userLang,
         input: userInput,
-        userId: userId
+        userId: userId,
       });
 
       if (res.data.error) {
         console.log("error from client");
-        
-        setUserOutput('Error: ' + res.data.error);
+
+        setUserOutput("Error: " + res.data.error);
       } else {
         console.log(res.data.output);
-        
+
         setUserOutput(res.data.output); // If there's output, display it
       }
     } catch (err) {
-      setUserOutput('Error: ' + (err.response ? err.response.data.error : err.message));
+      setUserOutput(
+        "Error: " + (err.response ? err.response.data.error : err.message)
+      );
     } finally {
       setLoading(false); // Ensure loading is turned off after the request finishes
     }
   }
 
-  const handleOptimizeCode= async()=>{
-    const responseCode=await axios.post("https://zide-server.onrender.com/optimize",{
-      code:userCode
-    })
-    setAiCode(responseCode.data.code)
-    console.log(aicode); 
-  }
+  const handleOptimizeCode = async () => {
+    setaiLoading(true);
+    const responseCode = await axios.post(
+      "https://zide-server.onrender.com/optimize",
+      {
+        code: userCode,
+      }
+    );
+    setAiCode(responseCode.data.code);
+    console.log(aicode);
+    setaiLoading(false);
+  };
 
-  const handleCopyCode=async()=>{
-    try{
+  const handleCopyCode = async () => {
+    try {
       await navigator.clipboard.writeText(aicode);
-      setCopied(true)
+      setCopied(true);
       console.log("Code copied!");
-    }catch(err){
-      console.log("Error on Copied code",err);
-      
+    } catch (err) {
+      console.log("Error on Copied code", err);
     }
-    
-  }
-
+  };
 
   // Function to clear the output screen
   function clearOutput() {
-    setUserOutput('');
+    setUserOutput("");
   }
 
   return (
     <div className="App bg-white dark:bg-gray-900 text-black dark:text-white">
       {/* Navbar */}
-      <nav className="bg-gradient-to-r from-teal-500 to-blue-500 text-white p-4">
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-xl">zIDE Compiler {userId ? `${userId}` : ""}</span>
+      <nav className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-4">
+        <div className="flex items-center justify-between text-center">
+          <div >
+          <span className="font-bold text-3xl px-2 ">  
+           <span className="text-red-500">
+           z
+           </span>
+           <span className="text-blue-600">
+           I
+           </span>
+           <span className="text-green-500">
+           D
+           </span>
+           <span className="text-yellow-500">
+           E
+           </span>
+          
+          </span>
+           <span className="text-white">
+            Compiler
+           </span>
+          </div>
           <div className="flex items-center space-x-4">
             <select
               className="p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded-md"
@@ -146,12 +173,22 @@ function App() {
             </select>
             <button
               onClick={() =>
-                setUserTheme(userTheme === 'vs-dark' ? 'vs' : 'vs-dark')
+                setUserTheme(userTheme === "vs-dark" ? "vs" : "vs-dark")
               }
               className="p-2 rounded-full bg-gray-700 dark:bg-gray-300 hover:bg-gray-600 dark:hover:bg-gray-400"
             >
-              <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="2" fill="none" />
+              <svg
+                className="h-6 w-6 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  fill="none"
+                />
               </svg>
             </button>
           </div>
@@ -171,19 +208,19 @@ function App() {
             onChange={(value) => setUserCode(value)}
             beforeMount={handleEditorWillMount}
           />
-          <div className='flex flex-row  justify-between'>
-          <button
-            className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
-            onClick={compile}
-          >
-            Run
-          </button>
-          <button
-            className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
-            onClick={handleOptimizeCode}
-          >
-            Optimie
-          </button>
+          <div className="flex flex-row  justify-between">
+            <button
+              className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
+              onClick={compile}
+            >
+              Run
+            </button>
+            <button
+              className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
+              onClick={handleOptimizeCode}
+            >
+              Optimie
+            </button>
           </div>
         </div>
 
@@ -198,36 +235,51 @@ function App() {
             onChange={(e) => setUserInput(e.target.value)}
           ></textarea>
 
-<h4 className="mt-4 text-xl font-semibold">Output:</h4>
-<div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
-  {loading ? (
-    <div className="flex justify-center items-center">
-      <img src={spinner} alt="Loading..." className="h-12 w-12 text-white" />
-    </div>
-  ) : (
-    <pre className="whitespace-pre-wrap break-words">{userOutput}</pre>
-  )}
-  <button
-    className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-    onClick={clearOutput}
-  >
-    Clear
-  </button>
-</div>
+          <h4 className="mt-4 text-xl font-semibold">Output:</h4>
+          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <img
+                  src={spinner}
+                  alt="Loading..."
+                  className="h-12 w-12 text-white"
+                />
+              </div>
+            ) : (
+              <pre className="whitespace-pre-wrap break-words">
+                {userOutput}
+              </pre>
+            )}
+            <button
+              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+              onClick={clearOutput}
+            >
+              Clear
+            </button>
+          </div>
 
-<h4 className="mt-4 text-xl font-semibold">AI:</h4>
-<div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
-  <pre className="whitespace-pre-wrap break-words">{aicode}</pre>
-  <button
-    className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-    onClick={handleCopyCode}
-  >
-   {
-    copied ? "copied!":"copy"
-   }
-  </button>
-</div>
-
+          <h4 className="mt-4 text-xl font-semibold">AI:</h4>
+          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
+            <pre className="whitespace-pre-wrap break-words">{aicode}</pre>
+            {aiLoading ? (
+            <div className="flex justify-center items-center">
+              <img
+                src={spinner}
+                alt="Loading..."
+                className="h-12 w-12 text-white"
+              />
+            </div>
+          ) : (
+            <button
+              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+              onClick={handleCopyCode}
+            >
+            <pre className="whitespace-pre-wrap break-words">
+              {copied ? "copied!" : "copy"}
+            </pre>
+            </button>
+          )}
+          </div>
         </div>
       </div>
     </div>
