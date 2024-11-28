@@ -34,8 +34,8 @@ mongoose.connect(process.env.DATABASE_URL, {
 
     app.post("/optimize", async (req, res) => {
         const userCode = req.body.code;
-        const prompt = `Optimize the following code and include comments for readability:\n\n${userCode}\n\nProvide the improved code only with comments included .`;
-        
+        const prompt =  `Optimize the following code and include comments for readability:\n\n${userCode}\n\nProvide the improved code only with comments included .`;
+     
     
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -164,5 +164,5 @@ app.get("/getallcode",async(req,res)=>{
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(Server is running on port ${PORT});
 });
