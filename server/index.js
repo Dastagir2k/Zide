@@ -35,6 +35,7 @@ mongoose.connect(process.env.DATABASE_URL, {
     app.post("/optimize", async (req, res) => {
         const userCode = req.body.code;
         const prompt = `Optimize the following code and include comments for readability:\n\n${userCode}\n\nProvide the improved code only with comments included .`;
+        
     
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -140,7 +141,7 @@ app.post("/compile", async (req, res) => {
 // get the code using user'id
 app.get("/getcode",async(req,res)=>{
     const userId = req.query.userId;
-    const response=await Code.find({userId:userId})
+    const response=await Code.find({userId:userId}).explain("executionStats")
 
     for (lastElement in response);
     lastElement;

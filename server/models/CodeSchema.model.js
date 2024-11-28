@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const CodeSchema = new mongoose.Schema({
     userId: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     code: {
         type: String,
