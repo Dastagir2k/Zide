@@ -5,7 +5,8 @@ import spinner from "./spinner.svg";
 import { useParams } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
-
+import logo from "./gmini.png";
+import zide from "./zide.jpg"
 function App() {
   const [searchParams] = useSearchParams();
   const [userId, setUserId] = useState("");
@@ -137,63 +138,59 @@ function App() {
   }
 
   return (
-    <div className="App bg-white dark:bg-gray-900 text-black dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
       {/* Navbar */}
-      <nav className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-4">
-        <div className="flex items-center justify-between text-center">
-          <div >
-          <span className="font-bold text-3xl px-2 ">  
-           <span className="text-red-500">
-           z
-           </span>
-           <span className="text-blue-600">
-           I
-           </span>
-           <span className="text-green-500">
-           D
-           </span>
-           <span className="text-yellow-500">
-           E
-           </span>
-          
-          </span>
-           <span className="text-white">
-            Compiler
-           </span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <select
-              className="p-2 bg-white dark:bg-gray-700 border border-gray-300 rounded-md"
-              value={userLang}
-              onChange={(e) => setUserLang(e.target.value)}
-            >
-              <option value="python">Python</option>
-              <option value="java">Java</option>
-              <option value="cpp">C++</option>
-            </select>
-            <button
-              onClick={() =>
-                setUserTheme(userTheme === "vs-dark" ? "vs" : "vs-dark")
-              }
-              className="p-2 rounded-full bg-gray-700 dark:bg-gray-300 hover:bg-gray-600 dark:hover:bg-gray-400"
-            >
-              <svg
-                className="h-6 w-6 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  fill="none"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </nav>
+      <nav className="bg-gradient-to-r from-indigo-700 via-purple-600 to-pink-500 shadow-lg px-6 py-2 flex items-center justify-between">
+  {/* Logo Section */}
+  <div className="flex items-center space-x-4">
+    <span className="text-4xl font-extrabold text-white shadow-inner">
+      <span className="text-red-500">z</span>
+      <span className="text-green-500">I</span>
+      <span className="text-blue-500">D</span>
+      <span className="text-yellow-500">E</span>
+      <span className="ml-2 text-lg text-gray-200">Compiler</span>
+    </span>
+  </div>
+
+  {/* Dropdown and Theme Toggle Section */}
+  <div className="flex items-center space-x-6">
+    {/* Language Selector */}
+    <select
+      className="p-2 bg-gray-100 dark:bg-gray-800 text-black dark:text-white border border-gray-300 rounded-md shadow focus:outline-none focus:ring focus:ring-indigo-300 transition"
+      value={userLang}
+      onChange={(e) => setUserLang(e.target.value)}
+    >
+      <option value="python">Python</option>
+      <option value="java">Java</option>
+      <option value="cpp">C++</option>
+    </select>
+
+    {/* Theme Toggle */}
+    <button
+      onClick={() => setUserTheme(userTheme === "vs-dark" ? "vs" : "vs-dark")}
+      className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 shadow-md transition ease-in-out duration-300 transform hover:scale-105"
+    >
+      <svg
+        className="h-6 w-6 text-black dark:text-white"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="5"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+        />
+          {/* Added Moon icon for Dark Theme */}
+          <path
+            className="fill-current dark:text-white"
+            d="M17.72 4.29a10.5 10.5 0 0 0-14.14 14.14 10.5 10.5 0 0 0 14.14-14.14zM11.67 11.17a2.186 2.186 0 0 1 0-3.182 2.186 2.186 0 0 1 3.182 0 2.186 2.186 0 0 1 0 3.182z"
+          />
+      </svg>
+    </button>
+  </div>
+</nav>
 
       <div className="flex h-screen">
         {/* Left Container - Code Editor */}
@@ -210,17 +207,26 @@ function App() {
           />
           <div className="flex flex-row  justify-between">
             <button
-              className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
+              className="mt-4 bg-teal-500 text-white h-10  w-16 rounded-md hover:bg-teal-600"
               onClick={compile}
             >
               Run
             </button>
             <button
-              className="mt-4 bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
-              onClick={handleOptimizeCode}
-            >
-              Optimie
-            </button>
+  className="mt-4 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white px-6 py-3 rounded-full flex items-center justify-center space-x-4 hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-in-out"
+  onClick={handleOptimizeCode}
+>
+  <div className="flex items-center space-x-4">
+    <span className="text-lg font-semibold">Optimize with</span>
+    <img
+      src={logo}
+      alt="Gemini Logo"
+      className="w-16 h-12 rounded-full border-4 border-white"
+    />
+  </div>
+</button>
+
+
           </div>
         </div>
 
@@ -262,23 +268,23 @@ function App() {
           <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
             <pre className="whitespace-pre-wrap break-words">{aicode}</pre>
             {aiLoading ? (
-            <div className="flex justify-center items-center">
-              <img
-                src={spinner}
-                alt="Loading..."
-                className="h-12 w-12 text-white"
-              />
-            </div>
-          ) : (
-            <button
-              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              onClick={handleCopyCode}
-            >
-            <pre className="whitespace-pre-wrap break-words">
-              {copied ? "copied!" : "copy"}
-            </pre>
-            </button>
-          )}
+              <div className="flex justify-center items-center">
+                <img
+                  src={spinner}
+                  alt="Loading..."
+                  className="h-12 w-12 text-white"
+                />
+              </div>
+            ) : (
+              <button
+                className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                onClick={handleCopyCode}
+              >
+                <pre className="whitespace-pre-wrap break-words">
+                  {copied ? "copied!" : "copy"}
+                </pre>
+              </button>
+            )}
           </div>
         </div>
       </div>
