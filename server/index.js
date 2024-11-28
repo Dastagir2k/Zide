@@ -151,6 +151,15 @@ app.get("/getcode",async(req,res)=>{
 })
 
 
+// get all the code of the user
+app.get("/getallcode",async(req,res)=>{
+    const userId = req.query.userId;
+    const response=await Code.find({userId:userId})
+    console.log("all the code of user "+response.data);
+    
+    res.status(200).send(response.map(item => item.code))
+})
+
 
 // Start the server
 app.listen(PORT, () => {

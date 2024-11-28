@@ -31,6 +31,7 @@ function App() {
   const [userOutput, setUserOutput] = useState(''); // Output from the code
   const [loading, setLoading] = useState(false); // Loading state for the API call
   const [aicode,setAiCode]=useState(""); // analyse the code using gemini ai
+  const [copied,setCopied]=useState(false);
 
   // Monaco Editor options
   const options = {
@@ -106,10 +107,20 @@ function App() {
       code:userCode
     })
     setAiCode(responseCode.data.code)
-    console.log(aicode);
-    
+    console.log(aicode); 
   }
 
+  const handleCopyCode=async()=>{
+    try{
+      await navigator.clipboard.writeText(aicode);
+      setCopied(true)
+      console.log("Code copied!");
+    }catch(err){
+      console.log("Error on Copied code",err);
+      
+    }
+    
+  }
 
 
   // Function to clear the output screen
@@ -209,9 +220,11 @@ function App() {
   <pre className="whitespace-pre-wrap break-words">{aicode}</pre>
   <button
     className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-    onClick={clearOutput}
+    onClick={handleCopyCode}
   >
-    Copy
+   {
+    copied ? "copied!":"copy"
+   }
   </button>
 </div>
 
