@@ -14,12 +14,6 @@ app.use(cors());
 
 app.use(express.json());
 
-
-
-
-
-
-
 // MongoDB Connection
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true,
@@ -164,5 +158,5 @@ app.get("/getallcode",async(req,res)=>{
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(Server is running on port ${PORT});
+    console.log(`Server is running on port ${PORT}`);
 });
