@@ -155,9 +155,9 @@ app.get("/getcode",async(req,res)=>{
 app.get("/getallcode",async(req,res)=>{
     const userId = req.query.userId;
     const response=await Code.find({userId:userId})
-    console.log("all the code of user "+response);
-    
-    res.status(200).send(response)
+    console.log("all the code of user "+response);  
+    const codeArray = response.map(item => item.code);
+    res.status(200).send(codeArray)
 })
 
 
