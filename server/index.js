@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 8000;
 app.use(cors());
 
 app.use(express.json());
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_URL);
+
+
 
 
 
@@ -28,22 +29,38 @@ mongoose.connect(process.env.DATABASE_URL, {
     .then(() => console.log("Connected to MongoDB"))
     .catch((err) => console.error("MongoDB connection error:", err.message));
 
+    const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+    console.log(process.env.GEMINI_URL);
 
-
-    app.post("/optimize",async(req,res)=>{
-        const userCode=req.body.code;
+    app.post("/optimize", async (req, res) => {
+        const userCode = req.body.code;
+        const prompt = `Optimize the following code and include comments for readability:\n\n${userCode}\n\nProvide the improved code only.`;
+    
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-            const prompt= `Optimize the following code and include comments for readablity :\n\n${userCode}\n\nProvide the improved code  only.`;
+    
+            if (!model) {
+                console.error("Model initialization failed.");
+                return res.status(500).json({ error: "Model not available." });
+            }
+    
             const result = await model.generateContent(prompt);
-            console.log(result.response.text());
-            res.json({code:result.response.text()})
+    
+            if (!result || !result.response) {
+                console.error("Invalid response from model.");
+                return res.status(500).json({ error: "Error generating optimized code." });
+            }
+    
+            const optimizedCode = result.response.text();
+            console.log("Optimized Code:", optimizedCode);
+    
+            res.status(200).json({ code: optimizedCode });
         } catch (error) {
-            console.error(error);
-            res.status(500).send("Error optimizing code");
+            console.error("Error optimizing code:", error.message);
+            res.status(500).json({ error: "Error optimizing code" });
         }
-    })
+    });
+    
 
 
 // Health Check Endpoint
