@@ -10,7 +10,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         {/* Pass `userid` as a route parameter */}
         
-        <Route path="/" element={<App />} />
+        <Route path="/" element={<App />}  />
       </Routes>
     </Router>
   </StrictMode>

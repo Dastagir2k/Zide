@@ -82,8 +82,7 @@ app.post("/compile", async (req, res) => {
         "cpp": { language: "c++", version: "10.2.0" },
         "python": { language: "python", version: "3.10.0" },
         "java": { language: "java", version: "15.0.2" },
-        "javascript": { language: "javascript", version: "18.15.0" },
-        "node": { language: "node", version: "18.14.0" } 
+        "javascript": { language: "javascript", version: "18.15.0" }
     };
 
     if (!languageMap[language]) {

@@ -254,28 +254,33 @@ function App() {
             onChange={(e) => setUserInput(e.target.value)}
           ></textarea>
 
-          <h4 className="mt-4 text-xl font-semibold">Output:</h4>
-          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 min-h-10 overflow-auto">
-            {loading ? (
-              <div className="flex justify-center items-center">
-                <img
-                  src={spinner}
-                  alt="Loading..."
-                  className="h-12 w-12 text-white"
-                />
-              </div>
-            ) : (
-              <pre className="whitespace-pre-wrap break-words">
-                {userOutput}
-              </pre>
-            )}
-            <button
-              className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              onClick={clearOutput}
-            >
-              Clear
-            </button>
-          </div>
+<h4 className="mt-4 text-xl font-semibold">Output:</h4>
+<div
+  className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 overflow-y-auto"
+  style={{ maxHeight: "200px" }} // Adjust the max height as needed
+>
+  {loading ? (
+    <div className="flex justify-center items-center">
+      <img
+        src={spinner}
+        alt="Loading..."
+        className="h-12 w-12 text-white"
+      />
+    </div>
+  ) : (
+    <pre className="whitespace-pre-wrap break-words">
+      {userOutput}
+    </pre>
+  )}
+
+</div>
+  <button
+    className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+    onClick={clearOutput}
+  >
+    Clear
+  </button>
+
 
           <h4 className="mt-4 text-xl font-semibold">AI:</h4>
           <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
@@ -306,3 +311,12 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
