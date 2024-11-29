@@ -77,6 +77,8 @@ function App() {
 
   // Function to call the compile endpoint
   async function compile() {
+    console.log(userLang);
+    
     setLoading(true);
     if (userCode === "") {
       setLoading(false); // Ensure loading is turned off if there's no code
@@ -96,6 +98,8 @@ function App() {
 
         setUserOutput("Error: " + res.data.error);
       } else {
+        console.log(userLang);
+        
         console.log(res.data.output);
 
         setUserOutput(res.data.output); // If there's output, display it
@@ -136,6 +140,27 @@ function App() {
   function clearOutput() {
     setUserOutput("");
   }
+  
+
+  // Add state for theme icon
+  const [themeIcon, setThemeIcon] = useState(
+    "https://www.pngfind.com/pngs/m/75-759829_png-file-svg-night-mode-icon-download-transparent.png"
+  );
+
+  // Toggle theme function
+  const toggleTheme = () => {
+    if (userTheme === "vs-dark") {
+      setUserTheme("vs");
+      setThemeIcon(
+        "https://static.thenounproject.com/png/4808961-200.png"
+      ); // Light mode image
+    } else {
+      setUserTheme("vs-dark");
+      setThemeIcon(
+        "https://www.pngfind.com/pngs/m/75-759829_png-file-svg-night-mode-icon-download-transparent.png"
+      ); // Dark mode image
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
@@ -163,32 +188,20 @@ function App() {
       <option value="python">Python</option>
       <option value="java">Java</option>
       <option value="cpp">C++</option>
+      <option value="javascript">Javascript</option>
     </select>
 
     {/* Theme Toggle */}
     <button
-      onClick={() => setUserTheme(userTheme === "vs-dark" ? "vs" : "vs-dark")}
-      className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 shadow-md transition ease-in-out duration-300 transform hover:scale-105"
-    >
-      <svg
-        className="h-6 w-6 text-black dark:text-white"
-        xmlns="http://www.w3.org/2000/svg"
+        onClick={toggleTheme}
+        className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 shadow-md transition ease-in-out duration-300 transform hover:scale-105"
       >
-        <circle
-          cx="12"
-          cy="12"
-          r="5"
-          stroke="currentColor"
-          strokeWidth="2"
-          fill="none"
+        <img
+          src={themeIcon}
+          alt="Theme Toggle"
+          className="h-6 w-6"
         />
-          {/* Added Moon icon for Dark Theme */}
-          <path
-            className="fill-current dark:text-white"
-            d="M17.72 4.29a10.5 10.5 0 0 0-14.14 14.14 10.5 10.5 0 0 0 14.14-14.14zM11.67 11.17a2.186 2.186 0 0 1 0-3.182 2.186 2.186 0 0 1 3.182 0 2.186 2.186 0 0 1 0 3.182z"
-          />
-      </svg>
-    </button>
+      </button>
   </div>
 </nav>
 
@@ -242,7 +255,7 @@ function App() {
           ></textarea>
 
           <h4 className="mt-4 text-xl font-semibold">Output:</h4>
-          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 max-h-56 overflow-auto">
+          <div className="output-box bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-300 min-h-10 overflow-auto">
             {loading ? (
               <div className="flex justify-center items-center">
                 <img

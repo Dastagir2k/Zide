@@ -70,19 +70,25 @@ app.post("/compile", async (req, res) => {
     let language = req.body.language;
     let input = req.body.input;
     let userId = req.body.userId; // Ensure userId is sent in the request body
-
+    
+    
     if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
     }
+    console.log("Received language:", language);
 
     let languageMap = {
         "c": { language: "c", version: "10.2.0" },
         "cpp": { language: "c++", version: "10.2.0" },
         "python": { language: "python", version: "3.10.0" },
-        "java": { language: "java", version: "15.0.2" } 
+        "java": { language: "java", version: "15.0.2" },
+        "javascript": { language: "javascript", version: "18.15.0" },
+        "node": { language: "node", version: "18.14.0" } 
     };
 
     if (!languageMap[language]) {
+        res.send(language)
+        
         return res.status(400).send({ error: "Unsupported language" });
     }
 
@@ -110,6 +116,7 @@ app.post("/compile", async (req, res) => {
     // calling the code compilation API
     Axios(config)
     .then(async (response) => {
+        console.log("API Response:", response.data);
         if (response.data.run.stdout) {
             res.json({ output: response.data.run.stdout });
             
